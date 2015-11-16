@@ -6,8 +6,10 @@ $mysqli = new mysqli("oniddb.cws.oregonstate.edu","brownand-db","AAWTd6Bpl6KKvN5
 if($mysqli->connect_errno){
 echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
+echo "THIS WORKS";
 ?>
 
+<!--web.engr.oregonstate.edu/~brownand/index.php-->
 
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
