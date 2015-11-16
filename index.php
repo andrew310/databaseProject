@@ -32,30 +32,32 @@ echo "THIS WORKS";
             <td> Employees </td>
         </tr>
         <tr>
-            <td>Name</td>
-            <td>Age</td>
+            <td>First Name</td>
+            <td>Last Name</td>
+            <td>Office</td>
             <td>Position</td>
-            <td>Base Office</td>
+
         </tr>
         <tr>
-            <td>Hank Bronson</td>
-            <td>30</td>
-            <td>Game Designer</td>
+            <td>Hank</td>
+            <td>Bronson</td>
             <td><a href="planet.php?id=1">London</a></td><!--FIX THIS LATER-->
+            <td>Game Designer</td>
+
         </tr>
 <?php
-if(!($stmt = $mysqli->prepare("SELECT bsg_people.fname, bsg_people.age, bsg_planets.name FROM bsg_people INNER JOIN bsg_planets ON bsg_people.homeworld = bsg_planets.id"))){
+if(!($stmt = $mysqli->prepare("SELECT employee.first_name, employee.last_name, employee.cid, employee.position FROM employee"))){
     echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
 
 if(!$stmt->execute()){
     echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
-if(!$stmt->bind_result($name, $age, $homeworld)){
+if(!$stmt->bind_result($first_name, $last_name, $office, $position)){
     echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
 while($stmt->fetch()){
- echo "<tr>\n<td>\n" . $name . "\n</td>\n<td>\n" . $age . "\n</td>\n<td>\n" . $homeworld . "\n</td>\n</tr>";
+ echo "<tr>\n<td>\n" . $first_name . "\n</td>\n<td>\n" . $last_name . "\n</td>\n<td>\n"  . $office . "\n</td>\n<td>\n" . $position . "\n</td>\n</tr>";
 }
 $stmt->close();
 ?>
