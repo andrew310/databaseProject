@@ -32,30 +32,33 @@ echo "THIS WORKS";
             <td> Employees </td>
         </tr>
         <tr>
-            <td>Name</td>
-            <td>Age</td>
+            <td>First Name</td>
+            <td>Last Name</td>
+            <td>Office</td>
             <td>Position</td>
-            <td>Base Office</td>
+
+
         </tr>
         <tr>
-            <td>Hank Bronson</td>
-            <td>30</td>
-            <td>Game Designer</td>
+            <td>Hank</td>
+            <td>Bronson</td>
             <td><a href="planet.php?id=1">London</a></td><!--FIX THIS LATER-->
+            <td>Game Designer</td>
+
         </tr>
 <?php
-if(!($stmt = $mysqli->prepare("SELECT bsg_people.fname, bsg_people.age, bsg_planets.name FROM bsg_people INNER JOIN bsg_planets ON bsg_people.homeworld = bsg_planets.id"))){
+if(!($stmt = $mysqli->prepare("SELECT employee.first_name, employee.last_name, employee.cid, employee.position FROM employee"))){
     echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
 
 if(!$stmt->execute()){
     echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
-if(!$stmt->bind_result($name, $age, $homeworld)){
+if(!$stmt->bind_result($first_name, $last_name, $office, $position)){
     echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
 while($stmt->fetch()){
- echo "<tr>\n<td>\n" . $name . "\n</td>\n<td>\n" . $age . "\n</td>\n<td>\n" . $homeworld . "\n</td>\n</tr>";
+ echo "<tr>\n<td>\n" . $first_name . "\n</td>\n<td>\n" . $last_name . "\n</td>\n<td>\n"  . $office . "\n</td>\n<td>\n" . $position . "\n</td>\n</tr>";
 }
 $stmt->close();
 ?>
@@ -64,28 +67,26 @@ $stmt->close();
 </div>
 
 <div class="container">
-    <form method="post" action="index.html"> <!--Change this later-->
+    <form method="post" action="addperson.php">
         <fieldset>
-            <legend>Name</legend>
+            <legend>New Employee</legend>
             <p>First Name: <input type="text" name="FirstName"/></p>
             <p>Last Name: <input type="text" name="LastName"/></p>
-        </fieldset>
-        <fieldset>
-            <legend>Age</legend>
-            <p>First Name: <input type="text" name="Age"/></p>
-        </fieldset>
-        <fieldset>
-            <legend>Office Locations</legend>
-            <select>
+            <p>Job Title: <input type="text" name="Position"/></p>
+
+            <select name="Office">
+                Office Location:
                 <option value="1">London</option>
                 <option value="2">Los Angeles</option>
                 <option value="3">Montreal</option>
                 <option value="4">Houston</option>
-                <option value="4">Boston</option>
+                <option value="5">Boston</option>
             </select>
         </fieldset>
-            <p><input type="submit"/></p>
+        <p><input type="submit"/></p>
     </form>
+
+
 </div>
 
 <div class="container">
@@ -98,7 +99,7 @@ $stmt->close();
     <form method="post" action="index.html"> <!--Change this later-->
         <fieldset>
             <legend>Office Info</legend>
-            <p>Planet Specialization: <input type="text" name="PPopulation"/></p>
+            <p>Planet Specialization: <input type="text" name="Population"/></p>
         </fieldset>
         <input type="submit" name="add" value="Add Planet"/>
         <input type="submit" name="update" value="Update"/>
