@@ -90,12 +90,25 @@ $stmt->close();
             <p>Job Title: <input type="text" name="Position"/></p>
             <p>Office:
                         <select name="Office">
-                            Office Location:
-                            <option value="1">London</option>
-                            <option value="2">Los Angeles</option>
-                            <option value="3">Montreal</option>
-                            <option value="4">Houston</option>
-                            <option value="5">Boston</option>
+                            <?php
+                            if(!($stmt = $mysqli->prepare("SELECT office.name, office.id FROM office"))){
+                                echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+                            }
+
+                            if(!$stmt->execute()){
+                                echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                            }
+                            if(!$stmt->bind_result($office, $id)){
+                                echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                            }
+                            while($stmt->fetch()){
+                             echo "\n<option value= \" $id \">\n" . $office . "\n</option>\n";
+                            }
+                            $stmt->close();
+
+                            ?>
+
+
                         </select>
 
             </p>
