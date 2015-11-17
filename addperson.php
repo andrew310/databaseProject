@@ -7,10 +7,10 @@ if($mysqli->connect_errno){
 echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
 	
-if(!($stmt = $mysqli->prepare("INSERT INTO employee(first_name, last_name, position, cid) VALUES (?,?,?,?)"))){
+if(!($stmt = $mysqli->prepare("INSERT INTO employee(first_name, last_name, age, position, cid) VALUES (?,?,?,?,?)"))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
-if(!($stmt->bind_param("ssii",$_POST['FirstName'],$_POST['LastName'],$_POST['Position'],$_POST['Office']))){
+if(!($stmt->bind_param("ssisi",$_POST['FirstName'],$_POST['LastName'],$_POST['Age'],$_POST['Position'],$_POST['Office']))){
 	echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
 }
 if(!$stmt->execute()){

@@ -34,33 +34,36 @@ echo "THIS WORKS";
         <tr>
             <td>First Name</td>
             <td>Last Name</td>
-            <td>Office</td>
+            <td>Age</td>
             <td>Position</td>
+            <td>Office</td>
 
 
         </tr>
         <tr>
             <td>Hank</td>
             <td>Bronson</td>
-            <td><a href="planet.php?id=1">London</a></td><!--FIX THIS LATER-->
+            <td>32</td>
             <td>Game Designer</td>
+            <td><a href="planet.php?id=1">London</a></td><!--FIX THIS LATER-->
 
         </tr>
 <?php
-if(!($stmt = $mysqli->prepare("SELECT employee.first_name, employee.last_name, employee.cid, employee.position FROM employee"))){
+if(!($stmt = $mysqli->prepare("SELECT employee.first_name, employee.last_name, employee.age, employee.position, office.city FROM employee INNER JOIN office on employee.cid = office.id"))){
     echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
 
 if(!$stmt->execute()){
     echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
-if(!$stmt->bind_result($first_name, $last_name, $office, $position)){
+if(!$stmt->bind_result($first_name, $last_name, $age, $position, $office)){
     echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
 while($stmt->fetch()){
- echo "<tr>\n<td>\n" . $first_name . "\n</td>\n<td>\n" . $last_name . "\n</td>\n<td>\n"  . $office . "\n</td>\n<td>\n" . $position . "\n</td>\n</tr>";
+ echo "<tr>\n<td>\n" . $first_name . "\n</td>\n<td>\n" . $last_name . "\n</td>\n<td>\n"  . $age . "\n</td>\n<td>\n"  . $position . "\n</td>\n<td>\n" . $office . "\n</td>\n</tr>";
 }
 $stmt->close();
+
 ?>
     </table>
 
@@ -72,16 +75,31 @@ $stmt->close();
             <legend>New Employee</legend>
             <p>First Name: <input type="text" name="FirstName"/></p>
             <p>Last Name: <input type="text" name="LastName"/></p>
+            <p> Age:
+                        <select name = "Age">
+                        <?php
+                            for ($i=18; $i<=100; $i++)
+                            {
+                                ?>
+                                    <option value="<?php echo $i;?>"><?php echo $i;?></option>
+                                <?php
+                            }
+                        ?>
+                        </select>
+            </p>
             <p>Job Title: <input type="text" name="Position"/></p>
+            <p>Office:
+                        <select name="Office">
+                            Office Location:
+                            <option value="1">London</option>
+                            <option value="2">Los Angeles</option>
+                            <option value="3">Montreal</option>
+                            <option value="4">Houston</option>
+                            <option value="5">Boston</option>
+                        </select>
 
-            <select name="Office">
-                Office Location:
-                <option value="1">London</option>
-                <option value="2">Los Angeles</option>
-                <option value="3">Montreal</option>
-                <option value="4">Houston</option>
-                <option value="5">Boston</option>
-            </select>
+            </p>
+
         </fieldset>
         <p><input type="submit"/></p>
     </form>
