@@ -38,6 +38,7 @@ echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error
             <td>Position</td>
             <td>Office</td>
             <td>Project</td>
+            <td>Skill Set</td>
         </tr>
 
         <tr>
@@ -53,8 +54,8 @@ echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error
         <!--PHP TO RETRIEVE DATA FROM TABLES, PULLS DATA FROM ACROSS FOUR TABLES-->
 <?php
 if(!($stmt = $mysqli->prepare("SELECT employee.first_name, employee.last_name, employee.age, employee.position, office.city, p.name FROM employee INNER JOIN office on employee.cid = office.id
-    LEFT JOIN employee_project ep on ep.eid = employee.id
-    LEFT JOIN project p ON ep.eid = p.id"))){
+                                                                  LEFT JOIN employee_project ep on ep.eid = employee.id
+                                                                  LEFT JOIN project p ON ep.pid = p.id"))){
     echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
 
@@ -150,23 +151,24 @@ $stmt->close();
                             ?>
                         </select>
             </p>
-            <p>Office:
-                        <select name="Office">
-                            <!--PHP RETRIEVES LIST OF OFFICES FROM DATABASE AND DISPLAYS THEM IN DROP DOWN -->
-                            <!--IT ALSO STORES THE OFFICE.ID AS THE OPTION VALUE SO THE CORRECT INFORMATION WILL BE PASSED TO TABLE-->
+
+            <p>Project:
+                        <select name="Project">
+                            <!--PHP RETRIEVES LIST OF PROJECTS FROM DATABASE AND DISPLAYS THEM IN DROP DOWN -->
+                            <!--IT ALSO STORES THE PROJECT.ID AS THE OPTION VALUE SO THE CORRECT INFORMATION WILL BE PASSED TO TABLE-->
                             <?php
-                            if(!($stmt = $mysqli->prepare("SELECT office.name, office.id FROM office"))){
+                            if(!($stmt = $mysqli->prepare("SELECT project.name, project.id FROM project"))){
                                 echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
                             }
 
                             if(!$stmt->execute()){
                                 echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
                             }
-                            if(!$stmt->bind_result($office, $id)){
+                            if(!$stmt->bind_result($project, $id)){
                                 echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
                             }
                             while($stmt->fetch()){
-                             echo "\n<option value= \" $id \">\n" . $office . "\n</option>\n";
+                             echo "\n<option value= \" $id \">\n" . $project . "\n</option>\n";
                             }
                             $stmt->close();
 
@@ -179,11 +181,119 @@ $stmt->close();
 </div>
 
 
+<!--REMOVE EMPLOYEE FROM PROJECT-->
+<div class="container">
+    <form method="post" action="removeFromProject.php">
+        <fieldset>
+            <legend>Remove Employee From Project</legend>
+            <p>Employee:
+                        <select name="Employee">
+                            <!--PHP RETRIEVES LIST OF EMPLOYEES FROM DATABASE AND DISPLAYS THEM IN DROP DOWN -->
+                            <!--IT ALSO STORES THE EMPLOYEE.ID AS THE OPTION VALUE SO THE CORRECT INFORMATION WILL BE PASSED TO TABLE-->
+                            <?php
+                            if(!($stmt = $mysqli->prepare("SELECT employee.first_name, employee.last_name, employee.position, employee.id FROM employee"))){
+                                echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+                            }
 
+                            if(!$stmt->execute()){
+                                echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                            }
+                            if(!$stmt->bind_result($fname, $lname, $position, $id)){
+                                echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                            }
+                            while($stmt->fetch()){
+                             echo "\n<option value= \" $id \">\n" . $lname . ", " . $fname . " ($position)" .  "\n</option>\n";
+                            }
+                            $stmt->close();
 
+                            ?>
+                        </select>
+            </p>
 
+            <p>Project:
+                        <select name="Project">
+                            <!--PHP RETRIEVES LIST OF PROJECTS FROM DATABASE AND DISPLAYS THEM IN DROP DOWN -->
+                            <!--IT ALSO STORES THE PROJECT.ID AS THE OPTION VALUE SO THE CORRECT INFORMATION WILL BE PASSED TO TABLE-->
+                            <?php
+                            if(!($stmt = $mysqli->prepare("SELECT project.name, project.id FROM project"))){
+                                echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+                            }
 
+                            if(!$stmt->execute()){
+                                echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                            }
+                            if(!$stmt->bind_result($project, $id)){
+                                echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                            }
+                            while($stmt->fetch()){
+                             echo "\n<option value= \" $id \">\n" . $project . "\n</option>\n";
+                            }
+                            $stmt->close();
 
+                            ?>
+                        </select>
+            </p>
+        </fieldset>
+        <p><input type="submit"/></p>
+    </form>
+</div>
+
+<!--MOVE EMPLOYEE TO NEW OFFICE-->
+<div class="container">
+    <form method="post" action="moveEmployee.php">
+        <fieldset>
+            <legend>Move Employee to New Office</legend>
+            <p>Employee:
+                        <select name="Employee">
+                            <!--PHP RETRIEVES LIST OF EMPLOYEES FROM DATABASE AND DISPLAYS THEM IN DROP DOWN -->
+                            <!--IT ALSO STORES THE EMPLOYEE.ID AS THE OPTION VALUE SO THE CORRECT INFORMATION WILL BE PASSED TO TABLE-->
+                            <?php
+                            if(!($stmt = $mysqli->prepare("SELECT employee.first_name, employee.last_name, employee.position, employee.id FROM employee"))){
+                                echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+                            }
+
+                            if(!$stmt->execute()){
+                                echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                            }
+                            if(!$stmt->bind_result($fname, $lname, $position, $id)){
+                                echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                            }
+                            while($stmt->fetch()){
+                             echo "\n<option value= \" $id \">\n" . $lname . ", " . $fname . " ($position)" .  "\n</option>\n";
+                            }
+                            $stmt->close();
+
+                            ?>
+                        </select>
+            </p>
+
+            <p>Office:
+                <select name="Office">
+                    <!--PHP RETRIEVES LIST OF OFFICES FROM DATABASE AND DISPLAYS THEM IN DROP DOWN -->
+                    <!--IT ALSO STORES THE OFFICE.ID AS THE OPTION VALUE SO THE CORRECT INFORMATION WILL BE PASSED TO TABLE-->
+                    <?php
+                    if(!($stmt = $mysqli->prepare("SELECT office.name, office.id FROM office"))){
+                        echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+                    }
+
+                    if(!$stmt->execute()){
+                        echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                    }
+                    if(!$stmt->bind_result($office, $id)){
+                        echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                    }
+                    while($stmt->fetch()){
+                     echo "\n<option value= \" $id \">\n" . $office . "\n</option>\n";
+                    }
+                    $stmt->close();
+
+                    ?>
+                </select>
+            </p>
+        </fieldset>
+        <p><input type="submit"/></p>
+    </form>
+</div>
 
 
 <!--FILTER BY OFFICE -->
@@ -217,6 +327,7 @@ $stmt->close();
 	</form>
 </div>
 
+<!--FILTER BY PROJECT-->
 <div class = "container">
 	<form method="post" action="projectFilter.php">
 		<fieldset>
@@ -247,6 +358,7 @@ $stmt->close();
 	</form>
 </div>
 
+<!--FILTER BY SKILLSET -->
 <div class = "container">
 	<form method="post" action="skillsetFilter.php">
 		<fieldset>
@@ -276,8 +388,6 @@ $stmt->close();
 		<input type="submit" value="Run Filter" />
 	</form>
 </div>
-
-
 
 </body>
 </html>

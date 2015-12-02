@@ -8,18 +8,18 @@ echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error
 }
 
 /*prepares SQL statement*/
-if(!($stmt = $mysqli->prepare("INSERT INTO employee(first_name, last_name, age, position, cid) VALUES (?,?,?,?,?)"))){
+if(!($stmt = $mysqli->prepare("UPDATE employee SET cid=? WHERE id =?"))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
 
-/*Binds parameters from Employee and Project HTML items as two strings, integer, string, and integer*/
-if(!($stmt->bind_param("ssisi",$_POST['FirstName'],$_POST['LastName'],$_POST['Age'],$_POST['Position'],$_POST['Office']))){
+/*Binds parameters from Employee and Project HTML items as TWO INTEGERS*/
+if(!($stmt->bind_param("ii",$_POST['Office'],$_POST['Employee']))){
 	echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
 }
 if(!$stmt->execute()){
 	echo "Execute failed: "  . $stmt->errno . " " . $stmt->error;
 } else {
-	echo "Added " . $stmt->affected_rows . " rows to employee.";
+	echo "Updated " . $stmt->affected_rows . " Employee Office.";
 }
 ?>
 

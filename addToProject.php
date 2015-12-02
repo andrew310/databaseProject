@@ -6,11 +6,14 @@ $mysqli = new mysqli("oniddb.cws.oregonstate.edu","brownand-db","AAWTd6Bpl6KKvN5
 if($mysqli->connect_errno){
 echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
-	
-if(!($stmt = $mysqli->prepare("INSERT INTO employee(first_name, last_name, age, position, cid) VALUES (?,?,?,?,?)"))){
+
+/*prepares SQL statement*/
+if(!($stmt = $mysqli->prepare("INSERT INTO employee_project(eid, pid) VALUES (?,?)"))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
-if(!($stmt->bind_param("ssisi",$_POST['FirstName'],$_POST['LastName'],$_POST['Age'],$_POST['Position'],$_POST['Office']))){
+
+/*Binds parameters from Employee and Project HTML items as TWO INTEGERS*/
+if(!($stmt->bind_param("ii",$_POST['Employee'],$_POST['Project']))){
 	echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
 }
 if(!$stmt->execute()){

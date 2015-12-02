@@ -55,21 +55,24 @@ CREATE TABLE employee_project(
 	pid int,
 	startDate date,
 	FOREIGN KEY (eid) REFERENCES employee (id),
-	FOREIGN KEY (pid) REFERENCES project (id)
+	FOREIGN KEY (pid) REFERENCES project (id),
+	CONSTRAINT name UNIQUE (eid, pid)
 );
 
 CREATE TABLE employee_supervisor(
 	eid int, 
 	sid int,
 	FOREIGN KEY (eid) REFERENCES employee (id),
-	FOREIGN KEY (sid) REFERENCES employee (id)
+	FOREIGN KEY (sid) REFERENCES employee (id),
+	CONSTRAINT name UNIQUE (eid, sid)
 );
 
 CREATE TABLE employee_skills(
 	eid int, 
 	sid int,
 	FOREIGN KEY (eid) REFERENCES employee (id),
-	FOREIGN KEY (sid) REFERENCES skillSet (id)
+	FOREIGN KEY (sid) REFERENCES skillSet (id),
+	CONSTRAINT name UNIQUE (eid, sid)
 );
 
 
