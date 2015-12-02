@@ -45,7 +45,7 @@ echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error
             <td>Bronson</td>
             <td>32</td>
             <td>Game Designer</td>
-            <td><a href="planet.php?id=1">London</a></td><!--FIX THIS LATER-->
+            <td><a href="officeFilter.php?id=1">London</a></td><!--FIX THIS LATER-->
             <td>Dire Doomlord 2</td>
 
         </tr>
@@ -115,34 +115,78 @@ $stmt->close();
                             $stmt->close();
 
                             ?>
-
-
                         </select>
             </p>
         </fieldset>
         <p><input type="submit"/></p>
     </form>
-
 </div>
 
-
+<!--ADD EMPLOYEE TO PROJECT-->
 <div class="container">
-    <form method="post" action="index.html"> <!--Change this later-->
+    <form method="post" action="addToProject.php">
         <fieldset>
-            <legend>Office Location</legend>
-            <p>City: <input type="text" name="PName"/></p>
+            <legend>Add Employee to Project</legend>
+            <p>Employee:
+                        <select name="Employee">
+                            <!--PHP RETRIEVES LIST OF EMPLOYEES FROM DATABASE AND DISPLAYS THEM IN DROP DOWN -->
+                            <!--IT ALSO STORES THE EMPLOYEE.ID AS THE OPTION VALUE SO THE CORRECT INFORMATION WILL BE PASSED TO TABLE-->
+                            <?php
+                            if(!($stmt = $mysqli->prepare("SELECT employee.first_name, employee.last_name, employee.position, employee.id FROM employee"))){
+                                echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+                            }
+
+                            if(!$stmt->execute()){
+                                echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                            }
+                            if(!$stmt->bind_result($fname, $lname, $position, $id)){
+                                echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                            }
+                            while($stmt->fetch()){
+                             echo "\n<option value= \" $id \">\n" . $lname . ", " . $fname . " ($position)" .  "\n</option>\n";
+                            }
+                            $stmt->close();
+
+                            ?>
+                        </select>
+            </p>
+            <p>Office:
+                        <select name="Office">
+                            <!--PHP RETRIEVES LIST OF OFFICES FROM DATABASE AND DISPLAYS THEM IN DROP DOWN -->
+                            <!--IT ALSO STORES THE OFFICE.ID AS THE OPTION VALUE SO THE CORRECT INFORMATION WILL BE PASSED TO TABLE-->
+                            <?php
+                            if(!($stmt = $mysqli->prepare("SELECT office.name, office.id FROM office"))){
+                                echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+                            }
+
+                            if(!$stmt->execute()){
+                                echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                            }
+                            if(!$stmt->bind_result($office, $id)){
+                                echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                            }
+                            while($stmt->fetch()){
+                             echo "\n<option value= \" $id \">\n" . $office . "\n</option>\n";
+                            }
+                            $stmt->close();
+
+                            ?>
+                        </select>
+            </p>
         </fieldset>
-    </form>
-    <form method="post" action="index.html"> <!--Change this later-->
-        <fieldset>
-            <legend>Office Info</legend>
-            <p>Planet Specialization: <input type="text" name="Population"/></p>
-        </fieldset>
-        <input type="submit" name="add" value="Add Planet"/>
-        <input type="submit" name="update" value="Update"/>
+        <p><input type="submit"/></p>
     </form>
 </div>
 
+
+
+
+
+
+
+
+
+<!--FILTER BY OFFICE -->
 <div class = "container">
 	<form method="post" action="officeFilter.php">
 		<fieldset>

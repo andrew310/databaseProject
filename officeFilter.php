@@ -30,6 +30,10 @@ if(!($stmt = $mysqli->prepare("SELECT employee.first_name, employee.last_name, e
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
 
+if(!($stmt->bind_param("i",$_GET["id"]))){
+	echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
+}
+
 if(!($stmt->bind_param("i",$_POST['Office']))){
 	echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
 }
