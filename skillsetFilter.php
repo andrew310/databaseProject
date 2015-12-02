@@ -23,18 +23,19 @@ echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error
             <td>Age</td>
             <td>Position</td>
             <td>Office</td>
-            <td>Project</td>
+            <td>Skill Set</td>
           </tr>
 <?php
-if(!($stmt = $mysqli->prepare("SELECT employee.first_name, employee.last_name, employee.age, employee.position, office.city, s.name FROM employee INNER JOIN office on employee.cid = office.id
-                                   LEFT JOIN employee_skills es ON employee.id = es.eid
-                                   LEFT JOIN skillSet s ON s.id = es.sid
-                                   WHERE s.id = ?
-                                  "))){
+if(!($stmt = $mysqli->prepare("SELECT employee.first_name, employee.last_name, employee.age, employee.position, office.city, s.name
+                               FROM employee
+                               INNER JOIN office ON employee.cid = office.id
+                               LEFT JOIN employee_skills es ON employee.id = es.eid
+                               LEFT JOIN skillSet s ON s.id = es.sid
+                               WHERE s.id = ? "))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
 
-if(!($stmt->bind_param("i",$_POST['Skill']))){
+if(!($stmt->bind_param("i",$_POST['skillset']))){
 	echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
 }
 
