@@ -203,6 +203,36 @@ $stmt->close();
 	</form>
 </div>
 
+<div class = "container">
+	<form method="post" action="skillsetFilter.php">
+		<fieldset>
+			<legend>Filter By Skill Set</legend>
+                <select name="skillset">
+                    <!--PHP RETRIEVES LIST OF PROJECTS FROM DATABASE AND DISPLAYS THEM IN DROP DOWN -->
+                    <!--IT ALSO STORES THE PROJECT.ID AS THE OPTION VALUE SO THE CORRECT INFORMATION WILL BE PASSED TO TABLE-->
+                    <?php
+                    if(!($stmt = $mysqli->prepare("SELECT skillSet.name, skillSet.id FROM skillSet"))){
+                        echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+                    }
+
+                    if(!$stmt->execute()){
+                        echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                    }
+                    if(!$stmt->bind_result($skill, $id)){
+                        echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                    }
+                    while($stmt->fetch()){
+                     echo "\n<option value= \" $id \">\n" . $skill . "\n</option>\n";
+                    }
+                    $stmt->close();
+
+                    ?>
+                </select>
+		</fieldset>
+		<input type="submit" value="Run Filter" />
+	</form>
+</div>
+
 
 
 </body>
