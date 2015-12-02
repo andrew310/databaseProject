@@ -23,25 +23,28 @@ echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error
             <td>Age</td>
             <td>Position</td>
             <td>Office</td>
-
-        </tr>
+            <td>Project</td>
+          </tr>
 <?php
-if(!($stmt = $mysqli->prepare("SELECT employee.first_name, employee.last_name, employee.age, employee.position, office.city FROM employee INNER JOIN office on employee.cid = office.id WHERE office.id = ?"))){
+if(!($stmt = $mysqli->prepare("SELECT employee.first_name, employee.last_name, employee.age, employee.position, office.city, p.name FROM employee INNER JOIN office on employee.cid = office.id
+                                   LEFT JOIN employee_project ep on ep.eid = employee.id
+                                   LEFT JOIN project p ON ep.eid = p.id
+                                   WHERE p.id = ?"))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
 
-if(!($stmt->bind_param("i",$_POST['Office']))){
+if(!($stmt->bind_param("i",$_POST['Project']))){
 	echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
 }
 
 if(!$stmt->execute()){
 	echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
-if(!$stmt->bind_result($first_name, $last_name, $age, $position, $office)){
+if(!$stmt->bind_result($first_name, $last_name, $age, $position, $office, $project)){
     echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
 while($stmt->fetch()){
- 	echo "<tr>\n<td>\n" . $first_name . "\n</td>\n<td>\n" . $last_name . "\n</td>\n<td>\n"  . $age . "\n</td>\n<td>\n"  . $position . "\n</td>\n<td>\n" . $office . "\n</td>\n</tr>";
+ 	echo "<tr>\n<td>\n" . $first_name . "\n</td>\n<td>\n" . $last_name . "\n</td>\n<td>\n"  . $age . "\n</td>\n<td>\n"  . $position . "\n</td>\n<td>\n" . $office . "\n</td>\n<td>\n" . $project . "\n</td>\n</tr>";
 }
 $stmt->close();
 ?>

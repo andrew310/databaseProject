@@ -6,7 +6,6 @@ $mysqli = new mysqli("oniddb.cws.oregonstate.edu","brownand-db","AAWTd6Bpl6KKvN5
 if($mysqli->connect_errno){
 echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
-echo "THIS WORKS";
 ?>
 
 <!--web.engr.oregonstate.edu/~brownand/index.php-->
@@ -26,6 +25,7 @@ echo "THIS WORKS";
 </head>
 <body>
 
+<!--DISPLAYS THE DATA SHEET -->
 <div class="container">
     <table>
         <tr>
@@ -37,38 +37,44 @@ echo "THIS WORKS";
             <td>Age</td>
             <td>Position</td>
             <td>Office</td>
-
-
+            <td>Project</td>
         </tr>
+
         <tr>
             <td>Hank</td>
             <td>Bronson</td>
             <td>32</td>
             <td>Game Designer</td>
             <td><a href="planet.php?id=1">London</a></td><!--FIX THIS LATER-->
+            <td>Dire Doomlord 2</td>
 
         </tr>
+
+        <!--PHP TO RETRIEVE DATA FROM TABLES, PULLS DATA FROM ACROSS FOUR TABLES-->
 <?php
-if(!($stmt = $mysqli->prepare("SELECT employee.first_name, employee.last_name, employee.age, employee.position, office.city FROM employee INNER JOIN office on employee.cid = office.id"))){
+if(!($stmt = $mysqli->prepare("SELECT employee.first_name, employee.last_name, employee.age, employee.position, office.city, p.name FROM employee INNER JOIN office on employee.cid = office.id
+    LEFT JOIN employee_project ep on ep.eid = employee.id
+    LEFT JOIN project p ON ep.eid = p.id"))){
     echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
 
 if(!$stmt->execute()){
     echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
-if(!$stmt->bind_result($first_name, $last_name, $age, $position, $office)){
+if(!$stmt->bind_result($first_name, $last_name, $age, $position, $office, $project)){
     echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
 while($stmt->fetch()){
- echo "<tr>\n<td>\n" . $first_name . "\n</td>\n<td>\n" . $last_name . "\n</td>\n<td>\n"  . $age . "\n</td>\n<td>\n"  . $position . "\n</td>\n<td>\n" . $office . "\n</td>\n</tr>";
+ echo "<tr>\n<td>\n" . $first_name . "\n</td>\n<td>\n" . $last_name . "\n</td>\n<td>\n"  . $age . "\n</td>\n<td>\n"  . $position . "\n</td>\n<td>\n" . $office . "\n</td>\n<td>\n" . $project . "\n</td>\n</tr>";
 }
 $stmt->close();
 
 ?>
     </table>
-
 </div>
 
+
+<!--ADD PERSON TO TABLE-->
 <div class="container">
     <form method="post" action="addperson.php">
         <fieldset>
@@ -90,6 +96,8 @@ $stmt->close();
             <p>Job Title: <input type="text" name="Position"/></p>
             <p>Office:
                         <select name="Office">
+                            <!--PHP RETRIEVES LIST OF OFFICES FROM DATABASE AND DISPLAYS THEM IN DROP DOWN -->
+                            <!--IT ALSO STORES THE OFFICE.ID AS THE OPTION VALUE SO THE CORRECT INFORMATION WILL BE PASSED TO TABLE-->
                             <?php
                             if(!($stmt = $mysqli->prepare("SELECT office.name, office.id FROM office"))){
                                 echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
@@ -110,15 +118,13 @@ $stmt->close();
 
 
                         </select>
-
             </p>
-
         </fieldset>
         <p><input type="submit"/></p>
     </form>
 
-
 </div>
+
 
 <div class="container">
     <form method="post" action="index.html"> <!--Change this later-->
@@ -135,6 +141,66 @@ $stmt->close();
         <input type="submit" name="add" value="Add Planet"/>
         <input type="submit" name="update" value="Update"/>
     </form>
+</div>
+
+<div class = "container">
+	<form method="post" action="officeFilter.php">
+		<fieldset>
+			<legend>Filter By Office</legend>
+                <select name="Office">
+                    <!--PHP RETRIEVES LIST OF OFFICES FROM DATABASE AND DISPLAYS THEM IN DROP DOWN -->
+                    <!--IT ALSO STORES THE OFFICE.ID AS THE OPTION VALUE SO THE CORRECT INFORMATION WILL BE PASSED TO TABLE-->
+                    <?php
+                    if(!($stmt = $mysqli->prepare("SELECT office.name, office.id FROM office"))){
+                        echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+                    }
+
+                    if(!$stmt->execute()){
+                        echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                    }
+                    if(!$stmt->bind_result($office, $id)){
+                        echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                    }
+                    while($stmt->fetch()){
+                     echo "\n<option value= \" $id \">\n" . $office . "\n</option>\n";
+                    }
+                    $stmt->close();
+
+                    ?>
+                </select>
+		</fieldset>
+		<input type="submit" value="Run Filter" />
+	</form>
+</div>
+
+<div class = "container">
+	<form method="post" action="projectFilter.php">
+		<fieldset>
+			<legend>Filter By Project</legend>
+                <select name="Project">
+                    <!--PHP RETRIEVES LIST OF PROJECTS FROM DATABASE AND DISPLAYS THEM IN DROP DOWN -->
+                    <!--IT ALSO STORES THE PROJECT.ID AS THE OPTION VALUE SO THE CORRECT INFORMATION WILL BE PASSED TO TABLE-->
+                    <?php
+                    if(!($stmt = $mysqli->prepare("SELECT project.name, project.id FROM project"))){
+                        echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+                    }
+
+                    if(!$stmt->execute()){
+                        echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                    }
+                    if(!$stmt->bind_result($project, $id)){
+                        echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
+                    }
+                    while($stmt->fetch()){
+                     echo "\n<option value= \" $id \">\n" . $project . "\n</option>\n";
+                    }
+                    $stmt->close();
+
+                    ?>
+                </select>
+		</fieldset>
+		<input type="submit" value="Run Filter" />
+	</form>
 </div>
 
 
